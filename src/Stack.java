@@ -5,7 +5,7 @@ public class Stack {
         this.decks = decks;
     }
 
-    public pullRandom() {
+    public void pullRandom() {
         System.out.println("Pulled a random card");
     }
 }
