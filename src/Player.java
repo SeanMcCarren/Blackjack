@@ -1,10 +1,10 @@
 abstract class Player {
     protected int score;
-    protected int count;
+    protected int betSize;
+    protected int winnings;
 
     public Player() {
-        this.score = 0; // Score in hand
-        this.count = 0; // Count in head
+        this.score = 0;
     }
 
     public void pulled(int value) {
@@ -15,12 +15,15 @@ abstract class Player {
         return this.score;
     }
 
-    public abstract int addToCount(){
-        
-    }
-
     public abstract boolean wantsNext(int score){
 
+    }
+
+    public abstract int getBet(){
+    }
+
+    public int getWinnings(){
+        return winnings;
     }
 
 
