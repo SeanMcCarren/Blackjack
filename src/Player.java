@@ -3,8 +3,8 @@ abstract class Player {
     protected int count;
 
     public Player() {
-        this.score = 0;
-        this.count = 0;
+        this.score = 0; // Score in hand
+        this.count = 0; // Count in head
     }
 
     public void pulled(int value) {
