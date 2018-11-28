@@ -8,5 +8,12 @@ public class Main {
         System.out.println("Player wants?: " + player1.wantsNext());
         player1.pulled(1);
         System.out.println("Player wants?: " + player1.wantsNext());
+
+        CardCounter p1 = new CardCounter();
+
+        p1.pulled(10);
+        System.out.println(p1.getCount());
     }
+
+
 }

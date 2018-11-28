@@ -15,12 +15,12 @@ abstract class Player {
         return this.score;
     }
 
-    public abstract boolean wantsNext(int score){
+    public abstract boolean wantsNext(int score);
 
-    }
+    
 
-    public abstract int getBet(){
-    }
+    public abstract int getBet();
+    
 
     public int getWinnings(){
         return winnings;
