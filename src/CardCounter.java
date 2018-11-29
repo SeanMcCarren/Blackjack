@@ -1,5 +1,6 @@
 class CardCounter extends Player{
     protected int count = 0;    //holds the current count of the game
+    protected int betSize = 1;
 
     public CardCounter(){
         super();
@@ -10,14 +11,17 @@ class CardCounter extends Player{
         if (this.score <= 10) {
             return true;
         }
+        else if(this.score > 21){
+            return false;
+        }
         else if (this.score > 10 && count > 0) {
             return false;
         }
-        else if(this.score > 10 && count <= 0) {
+        else if(this.score > 10 && this.score < 17 && count <= 0) {
             return true;
-        } else{
-            return false;
-        }
+        } 
+
+        return false;
     }
 
     
@@ -32,14 +36,15 @@ class CardCounter extends Player{
     }
 
     
-    public int getBet(){
+    public void setBet(){
+        if(betSize == 1){
+            return;
+        }
         if (count > 0) {
             betSize++;
         } else if (count < 0) {
             betSize--;
         }
-
-        return betSize;
     }
 
     public void notice(int value){
@@ -52,6 +57,10 @@ class CardCounter extends Player{
 
     public int getCount(){
         return count;
+    }
+
+    public int getBet(){
+        return betSize;
     }
 
     public void resetCount(){
