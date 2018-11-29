@@ -21,7 +21,7 @@ abstract class Player {
         return this.score;
     }
 
-    public abstract boolean wantsNext();       //removed int score inside function call
+    //public abstract boolean wantsNext();       //removed int score inside function call
 
 
     //public abstract int getBet();

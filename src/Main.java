@@ -4,16 +4,24 @@ public class Main {
         CardCounter player = new CardCounter();
         DealerAI dealer = new DealerAI();
 
-        for(int i = 0; i < 10000; i++){
-            playGame(1, player, dealer, 10);
+        int amountOfGames = 10000000;
+        int finalScore = 20; //vary the end score to win something
+
+        for(int i = 0; i < amountOfGames; i++){
+            playGame(1, player, dealer, 10, finalScore);
             player.resetCount();
         }
+
+        double result = player.getWinnings()/amountOfGames;
+
+        System.out.println("Win percentage: " + result + ".");
+        System.out.println("Amount of games played: " + amountOfGames + ".");
 
     }
 
 
 
-    public static void playGame(int decks, CardCounter player, DealerAI dealer, int maxDepth) {
+    public static void playGame(int decks, CardCounter player, DealerAI dealer, int maxDepth, int finalScore) {
         Stack stack = new Stack(decks);
 
         while(stack.getCards() > maxDepth){
@@ -57,7 +65,7 @@ public class Main {
              //Player's turn
             //System.out.println("Player starts");
 
-            while(player.wantsNext()){
+            while(player.wantsNext(card1)){
                 //int tempCard1 = stack.pull();
                 //System.out.println("pulled a " + tempCard1 + ".");
 
@@ -86,10 +94,10 @@ public class Main {
             int playerScore = player.getScore();
             int dealerScore = dealer.getScore();
 
-            if(playerScore > 21){
-                player.addWinnings(-1.0);
+            if(playerScore > finalScore){
+                player.addWinnings(-1.0 * betSize);
                 continue;
-            } else if(dealerScore > 21){
+            } else if(dealerScore > finalScore){
                 player.addWinnings(betSize);
                 continue;
             } else if(playerScore < dealerScore){
@@ -101,7 +109,7 @@ public class Main {
 
         }
 
-        System.out.println(player.getWinnings());
+        //System.out.println(player.getWinnings());
     }
 
 }

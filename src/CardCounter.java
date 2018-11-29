@@ -7,8 +7,8 @@ class CardCounter extends Player{
     }
 
     
-    public boolean wantsNext(){
-        if (this.score <= 10) {
+    public boolean wantsNext(int card){
+        /**if (this.score <= 10) {
             return true;
         }
         else if(this.score > 21){
@@ -22,6 +22,23 @@ class CardCounter extends Player{
         } 
 
         return false;
+        */
+
+        if( card < 6 && this.score > 12){
+            return false;
+        } 
+        else if( card < 6 && this.score <= 12){
+            return true;
+        }
+        else if(this.score >= 17){
+            return false;
+        }
+        else if(card > 6){
+            return true;
+        }
+    
+        return false;
+        //return this.score <= 16 ? true: false;
     }
 
     
@@ -40,10 +57,16 @@ class CardCounter extends Player{
         if(betSize == 1){
             return;
         }
-        if (count > 0) {
+        /**if (count > 0) {
             betSize++;
         } else if (count < 0) {
             betSize--;
+        }*/
+        if(count > 1){
+            betSize = (count - 1);
+        }
+        else if ( count <= 0){
+            betSize = 1;
         }
     }
 
@@ -60,7 +83,7 @@ class CardCounter extends Player{
     }
 
     public int getBet(){
-        return betSize;
+        return betSize; 
     }
 
     public void resetCount(){
