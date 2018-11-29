@@ -5,7 +5,7 @@ class CardCounter extends Player{
         super();
     }
 
-    @override
+    
     public boolean wantsNext(){
         if (this.score <= 10) {
             return true;
@@ -13,23 +13,25 @@ class CardCounter extends Player{
         else if (this.score > 10 && count > 0) {
             return false;
         }
-        else if (this.score > 10 && count <= 0) {
+        else if(this.score > 10 && count <= 0) {
             return true;
+        } else{
+            return false;
         }
     }
 
-    @override
+    
     public void pulled(int value){
-        super(value);
+        super.pulled(value);
 
         if (value == 1 || value == 10) {
             count--;
-        } else if ( 1 < value <= 6) {
+        } else if ( 1 < value && value <= 6) {
             count++;
         }
     }
 
-    @override
+    
     public int getBet(){
         if (count > 0) {
             betSize++;
@@ -40,8 +42,20 @@ class CardCounter extends Player{
         return betSize;
     }
 
+    public void notice(int value){
+        if (value == 1 || value == 10) {
+            count--;
+        } else if ( 1 < value && value <= 6) {
+            count++;
+        }
+    }
+
     public int getCount(){
         return count;
+    }
+
+    public void resetCount(){
+        this.count = 0;
     }
 
 }
