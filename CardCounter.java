@@ -40,4 +40,8 @@ class CardCounter extends Player{
         return betSize;
     }
 
+    public int getCount(){
+        return count;
+    }
+
 }
