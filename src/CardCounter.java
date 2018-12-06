@@ -1,28 +1,13 @@
 class CardCounter extends Player{
     protected int count = 0;    //holds the current count of the game
-    protected int betSize = 1;
+    protected double betSize = 1;
 
     public CardCounter(){
         super();
     }
 
-    
+    //implemented the basic strategy for blakcjack
     public boolean wantsNext(int card){
-        /**if (this.score <= 10) {
-            return true;
-        }
-        else if(this.score > 21){
-            return false;
-        }
-        else if (this.score > 10 && count > 0) {
-            return false;
-        }
-        else if(this.score > 10 && this.score < 17 && count <= 0) {
-            return true;
-        } 
-
-        return false;
-        */
 
         if( card < 6 && this.score > 12){
             return false;
@@ -45,25 +30,14 @@ class CardCounter extends Player{
     public void pulled(int value){
         super.pulled(value);
 
-        if (value == 1 || value == 10) {
-            count--;
-        } else if ( 1 < value && value <= 6) {
-            count++;
-        }
+        notice(value);
+
     }
 
     
     public void setBet(){
-        if(betSize == 1){
-            return;
-        }
-        /**if (count > 0) {
-            betSize++;
-        } else if (count < 0) {
-            betSize--;
-        }*/
         if(count > 1){
-            betSize = (count - 1);
+            betSize = ( count - 1.0);
         }
         else if ( count <= 0){
             betSize = 1;
@@ -82,7 +56,7 @@ class CardCounter extends Player{
         return count;
     }
 
-    public int getBet(){
+    public double getBet(){
         return betSize; 
     }
 

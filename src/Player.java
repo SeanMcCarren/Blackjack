@@ -2,9 +2,11 @@ abstract class Player {
     protected int score;
     protected int betSize;
     protected double winnings;
+    protected int amountOfWins;
 
     public Player() {
         this.score = 0;
+        this.amountOfWins = 0;
     }
 
     public void pulled(int value) {
@@ -21,11 +23,7 @@ abstract class Player {
         return this.score;
     }
 
-    //public abstract boolean wantsNext();       //removed int score inside function call
-
-
-    //public abstract int getBet();
-    
+    //public abstract boolean wantsNext();       //removed int score inside function call    
 
     public double getWinnings(){
         return winnings;
@@ -37,6 +35,14 @@ abstract class Player {
 
     public void resetScore(){
         this.score = 0;
+    }
+
+    public void won(){
+        this.amountOfWins++;
+    }
+
+    public int getAmountOfWins(){
+        return amountOfWins;
     }
 
 

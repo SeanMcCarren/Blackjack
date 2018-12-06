@@ -6,15 +6,18 @@ public class Main {
 
         int amountOfGames = 10000000;
         int finalScore = 20; //vary the end score to win something
+        int amountOfDecks = 2;
 
         for(int i = 0; i < amountOfGames; i++){
-            playGame(1, player, dealer, 10, finalScore);
+            playGame(amountOfDecks, player, dealer, 10, finalScore);
             player.resetCount();
         }
 
-        double result = player.getWinnings()/amountOfGames;
+        double result1 = player.getWinnings()/amountOfGames;
+        //double result2 = player.getAmountOfWins()/ (double) amountOfGames; 
 
-        System.out.println("Win percentage: " + result + ".");
+        System.out.println("Money won, in earnings / total games played: " + result1 + ".");
+        //System.out.println("Win percentage, i.e. games won/ total games played: " + result2 + ".");
         System.out.println("Amount of games played: " + amountOfGames + ".");
 
     }
@@ -31,8 +34,9 @@ public class Main {
 
             //if count of player is positive, we bet more
             //if the count is negative, we bet less
+            //int decksRemaining = (int) Math.floor( stack.getCards()/(52.0));
             player.setBet();
-            int betSize = player.getBet();
+            double betSize = player.getBet();
 
             //player gets two cards in the beginning
             player.pulled(stack.pull());
@@ -46,7 +50,7 @@ public class Main {
             int card2 = stack.pull();
             dealer.pulled(card2);
 
-            //actaul game starts now
+            //actual game starts now
             //System.out.println("Game started!");
 
             //If player has a blackjack, 21, then the game is already over
@@ -58,6 +62,7 @@ public class Main {
                 else { 
                     //System.out.println("Player has blackjack");
                     player.addWinnings(1.5 * betSize);
+                    player.won();
                     continue;
                 }
             }
@@ -99,12 +104,14 @@ public class Main {
                 continue;
             } else if(dealerScore > finalScore){
                 player.addWinnings(betSize);
+                player.won();
                 continue;
             } else if(playerScore < dealerScore){
                 player.addWinnings(-1.0 * betSize);
                 continue;
             } else if(playerScore > dealerScore){
                 player.addWinnings(betSize);
+                player.won();
             }
 
         }
