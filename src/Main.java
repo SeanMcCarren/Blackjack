@@ -4,12 +4,20 @@ public class Main {
         CardCounter player = new CardCounter();
         DealerAI dealer = new DealerAI();
 
-        int amountOfGames = 10000000;
+        int amountOfGames = 1000000000;
         int finalScore = 20; //vary the end score to win something
+
+        int progressBarLength = 20;
+        int progressIncrement = 0;
+        int progress = 0;
 
         for(int i = 0; i < amountOfGames; i++){
             playGame(1, player, dealer, 10, finalScore);
             player.resetCount();
+            if (i == progressIncrement) {
+                progressIncrement = ++progress * amountOfGames / progressBarLength;
+                System.out.print("|" + repeat("=", progress-1) + repeat(" ", progressBarLength-progress) + "|\r");
+            }
         }
 
         double result = player.getWinnings()/amountOfGames;
@@ -17,6 +25,14 @@ public class Main {
         System.out.println("Win percentage: " + result + ".");
         System.out.println("Amount of games played: " + amountOfGames + ".");
 
+    }
+
+    public static String repeat(String a, int n) {
+        String res = "";
+        for (int i = 0; i < n; i++) {
+            res += a;
+        }
+        return res;
     }
 
 
