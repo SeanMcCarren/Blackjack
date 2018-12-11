@@ -4,7 +4,7 @@ public class Main {
         CardCounter player = new CardCounter();
         DealerAI dealer = new DealerAI();
 
-        int amountOfGames = 1000000000;
+        int amountOfGames = 10000000;
         int finalScore = 20; //vary the end score to win something
         int amountOfDecks = 2;
 
