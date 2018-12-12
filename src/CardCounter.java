@@ -6,7 +6,7 @@ class CardCounter extends Player{
         super();
     }
 
-    //implemented the basic strategy for blakcjack
+    //implemented the basic strategy for blackjack
     public boolean wantsNext(int card){
 
         if( card < 6 && this.score > 12){
