@@ -1,19 +1,36 @@
+import java.util.ArrayList;
+
 public class StrategyGenerator {
+
+    private static double[] valueProbability;
+    private static int dealerUpperLimit = 17;
+
     public static void main(String[] args) {
-        
+
+        getValueProbabilityDealer();
+
         APHD root = new APHD();
         root.probability = 1.0;
-        traverse(root, 17); // as root we can pass our first card
+        traverse(root, 21); //to create all options
+        bestMethodTraversal(root); //we should ignore method suggestions if depth <= 2, but i dont do that here
 
-        /* Nitty gritty manual indexing for checking data structure
-        APHD obj = root.options.get(9).options.get(8);
-        System.out.println(obj.value);
-        System.out.println(obj.probability);
-        */
+        //root.options.get(4).options.get(6).print(new ArrayList<Integer>() {{add(6); add(8);}}, "");
 
-        /* This should equal 1, it is sum over all odds
-        System.out.println(sum(getValueProbability(root)) + root.deathProbability);
-        */
+        System.out.println(root.expOutcomeBestMethod);
+    }
+
+    private static void printArray(double[] arr) {
+        for ( int i = 0; i < arr.length; i++ ) {
+            System.out.println(i + ":\t" + arr[i]);
+        }
+    }
+
+    private static double probabilityDeathGivenPathTakeOne(APHD obj) {
+        double prob = obj.deathProbability;
+        for (APHD child : obj.options) {
+            prob -= child.deathProbability;
+        }
+        return prob/obj.probability;
     }
 
     private static double sum(double[] arr) {
@@ -22,6 +39,34 @@ public class StrategyGenerator {
             result += val;
         }
         return result;
+    }
+
+    private static void bestMethodTraversal(APHD node) {
+        double expOutcomeNoTake = expectedOutcomeNoTake(node);
+        if (node.options != null) {
+            double expOutcomeTake = 0.0;
+            for (APHD child : node.options) {
+                //assume we recursively take the best option.
+                bestMethodTraversal(child);
+                expOutcomeTake += child.expOutcomeBestMethod * (child.value == 10 ? 4.0 : 1.0) / 13.0;
+            }
+            expOutcomeTake -= probabilityDeathGivenPathTakeOne(node);
+            if(expOutcomeNoTake >= expOutcomeTake) {
+                node.expOutcomeBestMethod = expOutcomeNoTake;
+                node.bestOptionIsTake = false;
+            } else {
+                node.expOutcomeBestMethod = expOutcomeTake;
+                node.bestOptionIsTake = true;
+            }
+        } else {
+            node.expOutcomeBestMethod = expOutcomeNoTake;
+            node.bestOptionIsTake = false;
+        }
+    }
+
+    private static double expectedOutcomeNoTake(APHD node) {
+        return valueProbability[22] + dealerOddsCumulative(node.value - 1)
+                - (dealerOddsCumulative(21) - dealerOddsCumulative(node.value + 1));
     }
 
     private static void getVPHelper(APHD root, int depth, double[] storage) {
@@ -39,17 +84,36 @@ public class StrategyGenerator {
         }
     }
 
+    private static double dealerOddsCumulative(int x) {
+        if (valueProbability == null) {
+            getValueProbabilityDealer();
+        }
+        double cumulative = 0.0;
+        for (int i = dealerUpperLimit; i <= (x > 21 ? 21 : x); i++) {
+            cumulative += valueProbability[i];
+        }
+        if (x == 21) {
+            cumulative += valueProbability[0];
+        }
+        return cumulative;
+    }
+
     // firstCard = true implies the root is already a chosen card
     public static double[] getValueProbability(APHD root, boolean firstCard) {
         //result[0] is odd of blackjack
         //result[i] is odd of ending with i (of course you dont end with ...)
-        double[] result = new double[22];
+        //result[22] is death probability
+        double[] result = new double[23];
         getVPHelper(root, firstCard ? 1:0, result);
+        result[22] = root.deathProbability;
         return result;
     }
 
-    public static double[] getValueProbability(APHD root) {
-        return getValueProbability(root, false);
+    public static void getValueProbabilityDealer() {
+        APHD root = new APHD();
+        root.probability = 1.0;
+        traverse(root, dealerUpperLimit);
+        valueProbability = getValueProbability(root, false);
     }
   
     // passing limit = 17 yields dealer strat. limit = 21 yields always play strat
@@ -62,6 +126,7 @@ public class StrategyGenerator {
             if (par.value + i <= 21 || par.soft || i == 11) {
                 
                 APHD opt = new APHD();
+                opt.latestCard = i;
                 opt.parent = par;
                 opt.probability = par.probability * (i==10?4.0:1.0) / 13.0;
                 opt.value = par.value;
