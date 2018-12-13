@@ -124,14 +124,14 @@ public class Main {
                 player.addWinnings(-1.0 * betSize);
                 continue;
             } else if(dealerScore > finalScore){
-                player.addWinnings(betSize);
+                player.addWinnings(1.0 * betSize);
                 player.won();
                 continue;
             } else if(playerScore < dealerScore){
                 player.addWinnings(-1.0 * betSize);
                 continue;
             } else if(playerScore > dealerScore){
-                player.addWinnings(betSize);
+                player.addWinnings(1.0 * betSize);
                 player.won();
             }
 
