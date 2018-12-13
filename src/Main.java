@@ -1,24 +1,24 @@
 public class Main {
     public static void main(String[] args) {
         
-        
+        playFullGames();
         
     }
 
-    public void playFullGames() {
+    public static void playFullGames() {
         CardCounter player = new CardCounter();
         DealerAI dealer = new DealerAI();
 
         int amountOfGames = 10000000;
-        int finalScore = 20; //vary the end score to win something
-        int amountOfDecks = 2;
+        int finalScore = 21; //vary the end score to win something
+        int amountOfDecks = 6;
 
         int progressBarLength = 20;
         int progressIncrement = 0;
         int progress = 0;
 
         for(int i = 0; i < amountOfGames; i++){
-            playGame(amountOfDecks, player, dealer, 10, finalScore);
+            playGame(amountOfDecks, player, dealer, 60, finalScore);
             player.resetCount();
             if (i == progressIncrement) {
                 progressIncrement = ++progress * amountOfGames / progressBarLength;

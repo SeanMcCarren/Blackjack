@@ -9,13 +9,13 @@ class CardCounter extends Player{
     //implemented the basic strategy for blackjack
     public boolean wantsNext(int card){
 
-        if( card < 6 && this.score > 12){
+        if( card < 6 && getScore() > 12){
             return false;
         } 
-        else if( card < 6 && this.score <= 12){
+        else if( card < 6 && getScore() <= 12){
             return true;
         }
-        else if(this.score >= 17){
+        else if(getScore() >= 17){
             return false;
         }
         else if(card > 6){
@@ -25,7 +25,6 @@ class CardCounter extends Player{
         return false;
         //return this.score <= 16 ? true: false;
     }
-
     
     public void pulled(int value){
         super.pulled(value);
@@ -33,8 +32,7 @@ class CardCounter extends Player{
         notice(value);
 
     }
-
-    
+   
     public void setBet(){
         if(count > 1){
             betSize = ( count - 1.0);
