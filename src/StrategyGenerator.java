@@ -9,6 +9,8 @@ public class StrategyGenerator {
 
         getValueProbabilityDealer();
 
+        printArray(valueProbability);
+
         APHD root = new APHD();
         root.probability = 1.0;
         traverse(root, 21); //to create all options
