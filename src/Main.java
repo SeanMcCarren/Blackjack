@@ -9,16 +9,17 @@ public class Main {
         CardCounter player = new CardCounter();
         DealerAI dealer = new DealerAI();
 
-        int amountOfGames = 10000000;
+        int amountOfGames = 1000000;
         int finalScore = 21; //vary the end score to win something
         int amountOfDecks = 6;
 
         int progressBarLength = 20;
         int progressIncrement = 0;
         int progress = 0;
+        int rounds = 0;
 
         for(int i = 0; i < amountOfGames; i++){
-            playGame(amountOfDecks, player, dealer, 60, finalScore);
+            rounds += playGame(amountOfDecks, player, dealer, 60, finalScore);
             player.resetCount();
             if (i == progressIncrement) {
                 progressIncrement = ++progress * amountOfGames / progressBarLength;
@@ -27,9 +28,11 @@ public class Main {
         }
 
         double result1 = player.getWinnings()/amountOfGames;
+        double result2 = player.getWinnings()/rounds;
         //double result2 = player.getAmountOfWins()/ (double) amountOfGames; 
 
         System.out.println("Money won, in earnings / total games played: " + result1 + ".");
+        System.out.println("Money won, in earnings / total rounds played: " + result2 + ".");
         //System.out.println("Win percentage, i.e. games won/ total games played: " + result2 + ".");
         System.out.println("Amount of games played: " + amountOfGames + ".");
 
@@ -45,13 +48,15 @@ public class Main {
 
 
 
-    public static void playGame(int decks, CardCounter player, DealerAI dealer, int maxDepth, int finalScore) {
+    public static int playGame(int decks, CardCounter player, DealerAI dealer, int maxDepth, int finalScore) {
         Stack stack = new Stack(decks);
+        int rounds = 0;
 
         while(stack.getCards() > maxDepth){
             //new game, so reset scores
             player.resetScore();
             dealer.resetScore();
+            rounds++;
 
             //if count of player is positive, we bet more
             //if the count is negative, we bet less
@@ -75,8 +80,8 @@ public class Main {
             //System.out.println("Game started!");
 
             //If player has a blackjack, 21, then the game is already over
-            if(player.getScore() == 21) {
-                if(dealer.getScore() == 21) {
+            if(player.getScore() == finalScore) {
+                if(dealer.getScore() == finalScore) {
                     //System.out.println("Player and dealer have blackjack");
                     continue;
                 }
@@ -136,7 +141,7 @@ public class Main {
             }
 
         }
-
+        return rounds;
         //System.out.println(player.getWinnings());
     }
 

@@ -11,10 +11,10 @@ public class Stack {
         this.decks = decks;
         this.stack = new int[10];
         for (int i = 0; i < 9; ++i) {
-            this.stack[i] = decks;
+            this.stack[i] = decks * 4;
         }
-        this.stack[9] = decks * 4; // There are four times as many tens
-        this.cardsInStack = decks * 13;
+        this.stack[9] = decks * 4 * 4; // There are four times as many tens
+        this.cardsInStack = decks * 13 * 4;
         this.random = new Random();
     }
 
