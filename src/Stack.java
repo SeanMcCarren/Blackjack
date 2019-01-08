@@ -1,4 +1,5 @@
 import java.util.Random;
+import java.util.Arrays;
 
 public class Stack {
 
@@ -26,11 +27,21 @@ public class Stack {
         int i = stack[0];
         int j = 0; //index of card in stack to be determined
         while (i <= nextCardIndex) {
-            i+=stack[++j];
+            j++;
+            i+=stack[j];
         }
         --stack[j];
         --cardsInStack;
+        //System.out.println("pulled " + Integer.toString(j+1) + " where index was " + Integer.toString(nextCardIndex) + " out of " + Integer.toString(cardsInStack)
+        //        + " resulting to arr " + Arrays.toString(stack));
         return (++j);
+    }
+
+    public void test() {
+        int pulled = pull();
+        while (pulled != -1) {
+            pulled = pull();
+        }
     }
 
     public boolean isNext() {
