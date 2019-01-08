@@ -15,7 +15,7 @@ class CardCounter extends Player{
             if(score < 12){
                 return true;
             }
-            else if(score == 12 && card == 4 || card == 5 || card == 6){
+            else if(score == 12 && (card == 4 || card == 5 || card == 6)){
                 return false;
             }
             else if(score == 12){
@@ -34,7 +34,7 @@ class CardCounter extends Player{
             if(score <= 17){
                 return true;
             }
-            else if (score == 18 && card > 8){
+            else if (score == 18 && (card > 8 || card == 1)){
                 return true;
             }
             else {
@@ -51,12 +51,14 @@ class CardCounter extends Player{
     }
    
     public void setBet(int decks){
-        if (count > 1){
+        /*if (count > 1){
             betSize = ( count/decks - 1.0);
         }
         else if ( count <= 0){
             betSize = 1;
-        }
+        }*/
+
+        this.betSize = 1;
     }
 
     public void notice(int value){
