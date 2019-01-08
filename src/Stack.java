@@ -20,7 +20,7 @@ public class Stack {
     }
 
     public int pull() {
-        if(cardsInStack == 0){
+        if (cardsInStack == 0) {
             return -1; //need something better for this
         }
         int nextCardIndex = random.nextInt(cardsInStack);

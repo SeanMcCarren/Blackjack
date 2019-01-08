@@ -6,7 +6,7 @@ public class Main {
     }
 
     public static void playFullGames() {
-        CardCounter player = new CardCounter();
+        BadCardCounter player = new BadCardCounter();
         DealerAI dealer = new DealerAI();
 
         int amountOfGames = 1000000;
@@ -48,7 +48,7 @@ public class Main {
 
 
 
-    public static int playGame(int decks, CardCounter player, DealerAI dealer, int maxDepth, int finalScore) {
+    public static int playGame(int decks, BadCardCounter player, DealerAI dealer, int maxDepth, int finalScore) {
         Stack stack = new Stack(decks);
         int rounds = 0;
 
@@ -60,8 +60,8 @@ public class Main {
 
             //if count of player is positive, we bet more
             //if the count is negative, we bet less
-            //int decksRemaining = (int) Math.floor( stack.getCards()/(52.0));
-            player.setBet();
+            int decksRemaining = (int) Math.floor( stack.getCards()/(52.0));
+            player.setBet(decksRemaining);
             double betSize = player.getBet();
 
             //player gets two cards in the beginning

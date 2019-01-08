@@ -9,21 +9,38 @@ class CardCounter extends Player{
     //implemented the basic strategy for blackjack
     public boolean wantsNext(int card){
 
-        if( card < 6 && getScore() > 12){
-            return false;
-        } 
-        else if( card < 6 && getScore() <= 12){
-            return true;
+        int score = getScore();
+
+        if(this.amountOfAcesInHand == 0){
+            if(score < 12){
+                return true;
+            }
+            else if(score == 12 && card == 4 || card == 5 || card == 6){
+                return false;
+            }
+            else if(score == 12){
+                return true;
+            }
+            else if(13 <= score && score <= 16 && 2 <= card && card <= 6){
+                return false;
+            }
+            else if(13 <= score && score <= 16){
+                return true;
+            }
+            else{
+                return false;
+            }
+        } else {
+            if(score <= 17){
+                return true;
+            }
+            else if (score == 18 && card > 8){
+                return true;
+            }
+            else {
+                return false;
+            }
         }
-        else if(getScore() >= 17){
-            return false;
-        }
-        else if(card > 6){
-            return true;
-        }
-    
-        return false;
-        //return this.score <= 16 ? true: false;
     }
     
     public void pulled(int value){
@@ -33,9 +50,9 @@ class CardCounter extends Player{
 
     }
    
-    public void setBet(){
-        if(count > 1){
-            betSize = ( count - 1.0);
+    public void setBet(int decks){
+        if (count > 1){
+            betSize = ( count/decks - 1.0);
         }
         else if ( count <= 0){
             betSize = 1;
