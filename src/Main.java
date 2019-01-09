@@ -31,7 +31,6 @@ public class Main {
         double result1 = player.getWinnings()/amountOfGames;
         double result2 = player.getWinnings()/rounds;
         //double result2 = player.getAmountOfWins()/ (double) amountOfGames; 
-
         System.out.println("Money won, in earnings / total games played: " + result1 + ".");
         System.out.println("Money won, in earnings / total rounds played: " + result2 + ".");
         //System.out.println("Win percentage, i.e. games won/ total games played: " + result2 + ".");
@@ -125,16 +124,16 @@ public class Main {
             int playerScore = player.getScore();
             int dealerScore = dealer.getScore();
 
-            if(playerScore > finalScore){
+            if(playerScore > finalScore){ //even if dealer loses too: house's edge
                 player.addWinnings(-1.0 * betSize);
                 continue;
-            } else if(dealerScore > finalScore){
+            } else if(dealerScore > finalScore){ //player didnt bust, dealer did.
                 player.addWinnings(1.0 * betSize);
                 continue;
-            } else if(playerScore < dealerScore){
+            } else if(playerScore < dealerScore){ //no busts, but player < dealer
                 player.addWinnings(-1.0 * betSize);
                 continue;
-            } else if(playerScore > dealerScore){
+            } else if(playerScore > dealerScore){ //no busts, but player > dealer
                 player.addWinnings(1.0 * betSize);
             }
 
