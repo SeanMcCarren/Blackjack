@@ -6,21 +6,22 @@ public class Main {
     }
 
     public static void playFullGames() {
-        BadCardCounter player = new BadCardCounter();
+        CardCounter player = new CardCounter();
         DealerAI dealer = new DealerAI();
 
-        int amountOfGames = 1000000;
+        int amountOfGames = 10000000;
         int finalScore = 21; //vary the end score to win something
         int amountOfDecks = 6;
+        int rounds = 0;
 
         int progressBarLength = 20;
         int progressIncrement = 0;
         int progress = 0;
-        int rounds = 0;
 
         for(int i = 0; i < amountOfGames; i++){
-            rounds += playGame(amountOfDecks, player, dealer, 60, finalScore);
+            rounds += playGameSplit(amountOfDecks, player, dealer, 60, finalScore);
             player.resetCount();
+
             if (i == progressIncrement) {
                 progressIncrement = ++progress * amountOfGames / progressBarLength;
                 System.out.print("|" + repeat("=", progress-1) + repeat(" ", progressBarLength-progress) + "|\r");
@@ -48,15 +49,15 @@ public class Main {
 
 
 
-    public static int playGame(int decks, BadCardCounter player, DealerAI dealer, int maxDepth, int finalScore) {
+    public static int playGame(int decks, CardCounter player, DealerAI dealer, int maxDepth, int finalScore) {
         Stack stack = new Stack(decks);
-        int rounds = 0;
+        int numberOfRounds = 0;
 
         while(stack.getCards() > maxDepth){
             //new game, so reset scores
-            player.resetScore();
-            dealer.resetScore();
-            rounds++;
+            player.reset();
+            dealer.reset();
+            numberOfRounds++;
 
             //if count of player is positive, we bet more
             //if the count is negative, we bet less
@@ -65,8 +66,8 @@ public class Main {
             double betSize = player.getBet();
 
             //player gets two cards in the beginning
-            player.pulled(stack.pull());
-            player.pulled(stack.pull());
+            player.pulled(stack.pull(), false);
+            player.pulled(stack.pull(), false);
 
             //dealer gets one open card and one closed card
             int card1 = stack.pull();
@@ -88,7 +89,6 @@ public class Main {
                 else { 
                     //System.out.println("Player has blackjack");
                     player.addWinnings(1.5 * betSize);
-                    player.won();
                     continue;
                 }
             }
@@ -100,7 +100,7 @@ public class Main {
                 //int tempCard1 = stack.pull();
                 //System.out.println("pulled a " + tempCard1 + ".");
 
-                player.pulled(stack.pull());
+                player.pulled(stack.pull(), false);
             }
 
             //the closed card is open to the player
@@ -130,19 +130,209 @@ public class Main {
                 continue;
             } else if(dealerScore > finalScore){
                 player.addWinnings(1.0 * betSize);
-                player.won();
                 continue;
             } else if(playerScore < dealerScore){
                 player.addWinnings(-1.0 * betSize);
                 continue;
             } else if(playerScore > dealerScore){
                 player.addWinnings(1.0 * betSize);
-                player.won();
             }
 
         }
-        return rounds;
+        return numberOfRounds;
         //System.out.println(player.getWinnings());
     }
 
+
+
+    public static int playGameSplit(int decks, CardCounter player, DealerAI dealer, int maxDepth, int finalScore) {
+        Stack stack = new Stack(decks);
+        int numberOfRounds = 0;
+
+        while(stack.getCards() > maxDepth){
+            //new game, so reset scores
+            player.reset();
+            dealer.reset();
+            numberOfRounds++;
+
+            //if count of player is positive, we bet more
+            //if the count is negative, we bet less
+            int decksRemaining = (int) Math.floor( stack.getCards()/(52.0));
+            player.setBet(decksRemaining);
+            double betSize = player.getBet();
+
+            //player gets two cards in the beginning
+            int playerCard1 = stack.pull();
+            int playerCard2 = stack.pull();
+
+            int dealerCard1 = stack.pull();
+
+            //if we can split and want to split
+            if (playerCard1 == playerCard2 && player.wantsSplit(playerCard1, dealerCard1)){
+
+                boolean gotBlackjack1 = false;
+                boolean gotTied1 = false;
+                boolean gotBlackjack2 = false;
+                boolean gotTied2 = false;
+
+                player.notice(playerCard2);
+                player.notice(dealerCard1);
+
+                int dealerTempCardSplit = stack.pull();
+                dealer.pulled(dealerTempCardSplit);
+                dealer.pulled(dealerCard1);
+
+                player.pulled(playerCard1, false);
+                player.pulled(stack.pull(), false);
+
+                if(player.getScore() == 21){
+                    if(dealer.getScore() == 21){
+                        gotTied1 = true;
+                    } else{
+                        gotBlackjack1 = true;
+                    }
+                }
+
+                while(player.wantsNext(dealerCard1)){
+                    player.pulled(stack.pull(), false);
+                }
+
+                int playerScore1 = player.getScore();
+                player.reset();
+
+                player.pulled(playerCard2, true);
+                player.pulled(stack.pull(), false);
+
+                if(player.getScore() == 21){
+                    if(dealer.getScore() == 21){
+                        gotTied2 = true;
+                    } else{
+                        gotBlackjack2 = true;
+                    }
+                }
+
+                while(player.wantsNext(dealerCard1)){
+                    player.pulled(stack.pull(), false);
+                }
+
+                int playerScore2 = player.getScore();
+
+                player.notice(dealerTempCardSplit);
+
+                while(dealer.wantsNext()){
+                    int temp = stack.pull();
+                    player.notice(temp);
+                    dealer.pulled(temp);
+                }
+
+                int dealerScoreSplit = dealer.getScore();
+
+                if (gotBlackjack1){
+                    player.addWinnings(1.5 * betSize);
+                } else if (gotTied1){
+                    //nothing
+                } else{
+                    player.addWinnings(playerWon(dealerScoreSplit, playerScore1, betSize));
+                }
+
+                if (gotBlackjack2){
+                    player.addWinnings(1.5 * betSize);
+                } else if (gotTied2){
+                    //nothing
+                } else{
+                    player.addWinnings(playerWon(dealerScoreSplit, playerScore2, betSize));
+                }
+                
+                continue;
+            }
+
+            player.pulled(playerCard1, false);
+            player.pulled(playerCard2, false);
+
+            //dealer gets one open card and one closed card
+            player.notice(dealerCard1);
+            dealer.pulled(dealerCard1);
+            
+            int dealerCard2 = stack.pull();
+            dealer.pulled(dealerCard2);
+
+            //actual game starts now
+            //System.out.println("Game started!");
+
+            //If player has a blackjack, 21, then the game is already over
+            if(player.getScore() == finalScore) {
+                if(dealer.getScore() == finalScore) {
+                    //System.out.println("Player and dealer have blackjack");
+                    continue;
+                }
+                else { 
+                    //System.out.println("Player has blackjack");
+                    player.addWinnings(1.5 * betSize);
+                    continue;
+                }
+            }
+
+             //Player's turn
+            //System.out.println("Player starts");
+
+            while(player.wantsNext(dealerCard1)){
+                //int tempCard1 = stack.pull();
+                //System.out.println("pulled a " + tempCard1 + ".");
+
+                player.pulled(stack.pull(), false);
+            }
+
+            //the closed card is open to the player
+            //System.out.println("Player is done, card is flipped");
+            player.notice(dealerCard2);
+
+            //Dealer's turn
+            //System.out.println("Dealer starts");
+        
+            while(dealer.wantsNext()){
+                int tempCard2 = stack.pull();
+                //System.out.println("pulled a " + tempCard2 + ".");
+
+                player.notice(tempCard2);
+                dealer.pulled(tempCard2);
+            }
+
+            //System.out.print("Decide who wins, current score is: ");
+            //System.out.println("Player has: " + player.getScore() + ", Dealer has: " + dealer.getScore() + ".");
+
+            //the game has been played, checking who wins
+            int playerScore = player.getScore();
+            int dealerScore = dealer.getScore();
+
+            if(playerScore > finalScore){
+                player.addWinnings(-1.0 * betSize);
+                continue;
+            } else if(dealerScore > finalScore){
+                player.addWinnings(1.0 * betSize);
+                continue;
+            } else if(playerScore < dealerScore){
+                player.addWinnings(-1.0 * betSize);
+                continue;
+            } else if(playerScore > dealerScore){
+                player.addWinnings(1.0 * betSize);
+            }
+
+        }
+        return numberOfRounds;
+        //System.out.println(player.getWinnings());
+    }
+
+
+    public static double playerWon(int dealerScore, int playerScore, double betSize){
+        if (playerScore > 21){
+            return -1.0 * betSize;
+        } else if (dealerScore > 21){
+            return 1.0 * betSize;
+        } else if (playerScore < dealerScore){
+            return -1.0 * betSize;
+        } else if (playerScore > dealerScore){
+            return 1.0 * betSize;
+        }
+        return 0;
+    }
 }

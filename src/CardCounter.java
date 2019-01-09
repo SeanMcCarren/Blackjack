@@ -42,23 +42,40 @@ class CardCounter extends Player{
             }
         }
     }
+
+    public boolean wantsSplit(int playerCard, int dealerCard){
+        if ((playerCard == 2 || playerCard == 3) && 4 <= dealerCard && dealerCard <= 7){
+            return true;
+        } else if (playerCard == 2 || playerCard == 3){
+            return false;
+        } else if (playerCard == 4 || playerCard == 5 || playerCard == 10){
+            return false;
+        } else if (playerCard == 6 && (dealerCard == 2 || dealerCard == 1 || 7 <= dealerCard)){
+            return false;
+        } else if (playerCard == 6){
+            return true;
+        } else if (playerCard == 7 && (dealerCard == 1 || 8 <= dealerCard)){
+            return false;
+        } else{
+            return true;
+        }
+    }
     
-    public void pulled(int value){
+    public void pulled(int value, boolean seen){
         super.pulled(value);
 
-        notice(value);
-
+        if (!seen){
+            notice(value);
+        }
     }
    
     public void setBet(int decks){
-        /*if (count > 1){
+        if (count > 1){
             betSize = ( count/decks - 1.0);
         }
         else if ( count <= 0){
             betSize = 1;
-        }*/
-
-        this.betSize = 1;
+        }
     }
 
     public void notice(int value){

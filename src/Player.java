@@ -34,8 +34,9 @@ public class Player {
         this.winnings += winnings;
     }
 
-    public void resetScore(){
+    public void reset(){
         this.score = 0;
+        this.amountOfAcesInHand = 0;
     }
 
     public void won(){
