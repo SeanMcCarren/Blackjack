@@ -7,6 +7,9 @@ public class StrategyGenerator {
     private int dealerUpperLimit = 17;
     private List<List<Boolean>> takeListHard;
     private List<List<Boolean>> takeListSoft;
+    private int[] takeHard = new int[100];
+    private int[] takeSoft = new int[100];
+    private int dealerFirstCard;
     
 
     public static void main(String[] args) {
@@ -17,6 +20,7 @@ public class StrategyGenerator {
 
     public void test() {
         getValueProbabilityDealer();
+        printArray(valueProbability);
         APHD node = new APHD();
         node.value = 21;
         node.depth = 2;
@@ -26,22 +30,40 @@ public class StrategyGenerator {
 
     public void runFirstCardDependent() {
         //of course the dealer has one card open. Say we want to generate a strategy based on that too..
-        for (int dealerFirstCard = 2; dealerFirstCard <= 11; dealerFirstCard++) {
-            System.out.print("Starting calculation of strategy table given the dealer's open card is of value " + Integer.toString(dealerFirstCard));
+        //10 width,  10 height
+        for (dealerFirstCard = 2; dealerFirstCard <= 11; dealerFirstCard++) {
             APHD root = new APHD();
             root.value = dealerFirstCard;
             root.probability = 1.0;
             root.depth = 1;
-            if (dealerFirstCard != 11) {
+            if (dealerFirstCard == 11) {
                 root.aces = 1;
             } else {
                 root.aces = 0;
             }
             traverse(root, dealerUpperLimit);
             valueProbability = getValueProbability(root, true);
-            System.out.println(". The probability table of dealer: ");
-            printArray(valueProbability);
+            //System.out.println(". The probability table of dealer: ");
+            //printArray(valueProbability);
             run();
+        }
+        System.out.println("S  2  3  4  5  6  7  8  9  10 A");
+        printFakeMatrix(takeSoft);
+        System.out.println("H  2  3  4  5  6  7  8  9  10 A");
+        printFakeMatrix(takeHard);
+        
+    }
+
+    public void printFakeMatrix(int[] matrix) {
+        if (matrix.length == 100) {
+            for (int i = 0; i<10; i++) {
+                System.out.print(i+11);
+                for (int j=0; j<10; j++) {
+                    System.out.print(" "  + Integer.toString(matrix[i*10+j]) + " ");
+                }
+                System.out.print("\n");
+            }
+            System.out.println("\n");
         }
     }
 
@@ -91,21 +113,13 @@ public class StrategyGenerator {
                 }
             }
         }
-        System.out.println("V  S H (value, soft advice, hard advice)");
-        for (int i = 4; i < 21; i++) {
-            System.out.print(Integer.toString(i) + (i<10?" ":"") + " ");
+        for (int i = 11; i < 21; i++) {
             if(!takeListSoft.get(i).isEmpty()) {
-                System.out.print(takeListSoft.get(i).get(0)?"1":"0");
-            } else {
-                System.out.print(" ");
+                takeSoft[(i-11)*10+(dealerFirstCard-2)] = takeListSoft.get(i).get(0)?1:0;
             }
-            System.out.print(" ");
             if(!takeListHard.get(i).isEmpty()) {
-                System.out.print(takeListHard.get(i).get(0)?"1":"0");
-            } else {
-                System.out.print(" ");
+                takeHard[(i-11)*10+(dealerFirstCard-2)] = takeListHard.get(i).get(0)?1:0;
             }
-            System.out.print("\n");
         }
         //System.out.println(root.expOutcomeBestMethod);
     }
