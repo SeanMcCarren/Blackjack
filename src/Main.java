@@ -19,7 +19,7 @@ public class Main {
         int progress = 0;
 
         for(int i = 0; i < amountOfGames; i++){
-            rounds += playGameSplit(amountOfDecks, player, dealer, 60, finalScore);
+            rounds += playGameDouble(amountOfDecks, player, dealer, 60, finalScore);
             player.resetCount();
 
             if (i == progressIncrement) {
@@ -241,7 +241,7 @@ public class Main {
                 } else{
                     player.addWinnings(playerWon(dealerScoreSplit, playerScore2, betSize));
                 }
-                
+
                 continue;
             }
 
@@ -321,6 +321,129 @@ public class Main {
         //System.out.println(player.getWinnings());
     }
 
+    public static int playGameDouble(int decks, CardCounter player, DealerAI dealer, int maxDepth, int finalScore) {
+        Stack stack = new Stack(decks);
+        int numberOfRounds = 0;
+
+        while(stack.getCards() > maxDepth){
+            //new game, so reset scores
+            player.reset();
+            dealer.reset();
+            numberOfRounds++;
+
+            //if count of player is positive, we bet more
+            //if the count is negative, we bet less
+            int decksRemaining = (int) Math.floor( stack.getCards()/(52.0));
+            player.setBet(decksRemaining);
+            double betSize = player.getBet();
+
+
+            //player gets two cards in the beginning
+            player.pulled(stack.pull(), false);
+            player.pulled(stack.pull(), false);
+
+            int dealerCard1 = stack.pull();
+            player.notice(dealerCard1);
+            dealer.pulled(dealerCard1);
+            
+            int card2 = stack.pull();
+            dealer.pulled(card2);
+
+
+            if (player.wantsDouble(player.getScore(), dealerCard1)){
+                
+                //one additional card, rule of doubling down
+                player.pulled(stack.pull(), false);
+
+                //betsize doubled
+                betSize = betSize * 2;
+
+                player.notice(card2);
+
+                //dealer takes his cards
+                while (dealer.wantsNext()){
+                    int temporary = stack.pull();
+                    player.notice(temporary);
+                    dealer.pulled(temporary);
+                }
+
+                int dealerScore = dealer.getScore();
+                int playerScore = player.getScore();
+
+                
+                player.addWinnings(playerWon(dealerScore, playerScore, betSize));
+
+                continue;
+
+            }
+
+            //dealer gets one open card and one closed card
+
+            //actual game starts now
+            //System.out.println("Game started!");
+
+            //If player has a blackjack, 21, then the game is already over
+            if(player.getScore() == finalScore) {
+                if(dealer.getScore() == finalScore) {
+                    //System.out.println("Player and dealer have blackjack");
+                    continue;
+                }
+                else { 
+                    //System.out.println("Player has blackjack");
+                    player.addWinnings(1.5 * betSize);
+                    continue;
+                }
+            }
+
+             //Player's turn
+            //System.out.println("Player starts");
+
+            while(player.wantsNext(dealerCard1)){
+                //int tempCard1 = stack.pull();
+                //System.out.println("pulled a " + tempCard1 + ".");
+
+                player.pulled(stack.pull(), false);
+            }
+
+            //the closed card is open to the player
+            //System.out.println("Player is done, card is flipped");
+            player.notice(card2);
+
+            //Dealer's turn
+            //System.out.println("Dealer starts");
+        
+            while(dealer.wantsNext()){
+                int tempCard2 = stack.pull();
+                //System.out.println("pulled a " + tempCard2 + ".");
+
+                player.notice(tempCard2);
+                dealer.pulled(tempCard2);
+            }
+
+            //System.out.print("Decide who wins, current score is: ");
+            //System.out.println("Player has: " + player.getScore() + ", Dealer has: " + dealer.getScore() + ".");
+
+            //the game has been played, checking who wins
+            int playerScore = player.getScore();
+            int dealerScore = dealer.getScore();
+
+            if(playerScore > finalScore){ //even if dealer loses too: house's edge
+                player.addWinnings(-1.0 * betSize);
+                continue;
+            } else if(dealerScore > finalScore){ //player didnt bust, dealer did.
+                player.addWinnings(1.0 * betSize);
+                continue;
+            } else if(playerScore < dealerScore){ //no busts, but player < dealer
+                player.addWinnings(-1.0 * betSize);
+                continue;
+            } else if(playerScore > dealerScore){ //no busts, but player > dealer
+                player.addWinnings(1.0 * betSize);
+            }
+
+        }
+        return numberOfRounds;
+        //System.out.println(player.getWinnings());
+    }
 
     public static double playerWon(int dealerScore, int playerScore, double betSize){
         if (playerScore > 21){

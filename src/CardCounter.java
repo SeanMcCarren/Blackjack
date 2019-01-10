@@ -60,6 +60,30 @@ class CardCounter extends Player{
             return true;
         }
     }
+
+    public boolean wantsDouble(int playerTotal, int dealerCard){
+        if(this.amountOfAcesInHand == 0){
+            if (playerTotal == 9 && (3 <= dealerCard && dealerCard <= 6)){
+                return true;
+            } else if (playerTotal == 10 && (2 <= dealerCard && dealerCard <= 9)){
+                return true;
+            } else if (playerTotal == 11 && (2 <= dealerCard && dealerCard <= 10)){
+                return true;
+            } else{
+                return false;
+            }
+        } else{
+            if ((playerTotal == 13 || playerTotal == 14) && (dealerCard == 5 || dealerCard == 6)){
+                return true;
+            } else if ((playerTotal == 15 || playerTotal == 16) && (4 <= dealerCard && dealerCard <= 6)){
+                return true;
+            } else if ((playerTotal == 17 || playerTotal == 18) && (3 <= dealerCard && dealerCard <= 6)){
+                return true;
+            } else{
+                return false;
+            }
+        }
+    }
     
     public void pulled(int value, boolean seen){
         super.pulled(value);
@@ -70,12 +94,17 @@ class CardCounter extends Player{
     }
    
     public void setBet(int decks){
-        if (count > 1){
-            betSize = ( count/decks - 1.0);
+        /*if (count > 1){
+            if(( count/decks - 1.0) > 0){
+                betSize = (count/decks - 1.0);
+            } else{
+                betSize = 1;
+            }
         }
         else if ( count <= 0){
             betSize = 1;
-        }
+        }*/
+        this.betSize = 1;
     }
 
     public void notice(int value){
