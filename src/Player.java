@@ -20,10 +20,14 @@ public class Player {
         } else {
             this.score += value;
         }
+        if (this.score > 21 && this.amountOfAcesInHand > 0) {
+            this.amountOfAcesInHand--;
+            this.score -= 10;
+        }
     }
 
     public int getScore() {
-        return this.score + ((this.amountOfAcesInHand != 0 && this.score <= 11) ? 10 : 0);
+        return this.score;
     }
 
     //public abstract boolean wantsNext();       //removed int score inside function call    
