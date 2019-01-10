@@ -28,8 +28,8 @@ public class Main {
             }
         }
 
-        double result1 = player.getWinnings()/amountOfGames;
-        double result2 = player.getWinnings()/rounds;
+        double result1 = player.getWinnings()/(100.0 * amountOfGames);
+        double result2 = player.getWinnings()/(100.0 * rounds);
         //double result2 = player.getAmountOfWins()/ (double) amountOfGames; 
         System.out.println("Money won, in earnings / total games played: " + result1 + ".");
         System.out.println("Money won, in earnings / total rounds played: " + result2 + ".");
