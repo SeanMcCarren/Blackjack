@@ -16,8 +16,10 @@ public class Player {
     public void pulled(int value) {
         if(value == 1){
             this.amountOfAcesInHand++;
+            this.score += 11;
+        } else {
+            this.score += value;
         }
-        this.score += value;
     }
 
     public int getScore() {
