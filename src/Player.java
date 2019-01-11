@@ -2,12 +2,10 @@ public class Player {
     protected int score;
     protected int betSize;
     protected double winnings;
-    protected int amountOfWins;
     protected int amountOfAcesInHand;
 
     public Player() {
         this.score = 0;
-        this.amountOfWins = 0;
         this.betSize = 1;
         this.winnings = 0.0;
         this.amountOfAcesInHand = 0;
@@ -45,11 +43,4 @@ public class Player {
         this.amountOfAcesInHand = 0;
     }
 
-    public void won(){
-        this.amountOfWins++;
-    }
-
-    public int getAmountOfWins(){
-        return amountOfWins;
-    }
 }

@@ -439,7 +439,7 @@ public class Main {
             } else if(playerScore > dealerScore){ //no busts, but player > dealer
                 player.addWinnings(1.0 * betSize);
             }
-
+            //if equal nothing happens and we just go on
         }
         return numberOfRounds;
         //System.out.println(player.getWinnings());
@@ -646,6 +646,83 @@ public class Main {
         }
         return numberOfRounds;
         //System.out.println(player.getWinnings());
+    }
+
+    public static int playGameInfinite(int decks, CardCounter player, DealerAI dealer, int maxDepth, int finalScore) {
+        Stack stack = new Stack(decks);
+        int numberOfRounds = 0;
+
+        int cardsDrawn = decks * 13 * 4;
+
+        while(cardsDrawn > maxDepth){
+            player.reset();
+            dealer.reset();
+            numberOfRounds++;
+
+            int decksRemaining = (int) Math.floor( stack.getCards()/(52.0));
+            player.setBet(decksRemaining);
+            double betSize = player.getBet();
+
+            player.pulled(stack.pullInfinite(), false);
+            cardsDrawn--;
+            player.pulled(stack.pullInfinite(), false);
+            cardsDrawn--;
+
+            int card1 = stack.pullInfinite();
+            player.notice(card1);
+            dealer.pulled(card1);
+            cardsDrawn--;
+            
+            int card2 = stack.pullInfinite();
+            dealer.pulled(card2);
+            cardsDrawn--;
+
+
+            if(player.getScore() == finalScore) {
+                if(dealer.getScore() == finalScore) {
+                    continue;
+                }
+                else { 
+                    player.addWinnings(1.5 * betSize);
+                    continue;
+                }
+            }
+
+            while(player.wantsNext(card1)){
+
+                player.pulled(stack.pullInfinite(), false);
+                cardsDrawn--;
+
+            }
+
+            player.notice(card2);
+
+            while(dealer.wantsNext()){
+                int tempCard2 = stack.pullInfinite();
+
+                player.notice(tempCard2);
+                dealer.pulled(tempCard2);
+                cardsDrawn--;
+            }
+
+            int playerScore = player.getScore();
+            int dealerScore = dealer.getScore();
+
+            if(playerScore > finalScore){ 
+                player.addWinnings(-1.0 * betSize);
+                continue;
+            } else if(dealerScore > finalScore){ 
+                player.addWinnings(1.0 * betSize);
+                continue;
+            } else if(playerScore < dealerScore){ 
+                player.addWinnings(-1.0 * betSize);
+                continue;
+            } else if(playerScore > dealerScore){ 
+                player.addWinnings(1.0 * betSize);
+            }
+
+        }
+        return numberOfRounds;
     }
 
     public static double playerWon(int dealerScore, int playerScore, double betSize){

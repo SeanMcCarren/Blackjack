@@ -96,7 +96,7 @@ class CardCounter extends Player{
     public void setBet(int decks){
         if (count > 1){
             if(( (100.0*count)/decks - 1.0) > 0){
-                betSize = (count/decks - 1.0);
+                betSize = (100*count/decks - 1.0);
             } else{
                 betSize = 100;
             }
@@ -107,7 +107,7 @@ class CardCounter extends Player{
             betSize = 100;
         }
 
-        //this.betSize =1;
+        //this.betSize = 100;
     }
 
     public void notice(int value){

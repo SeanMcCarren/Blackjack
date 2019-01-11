@@ -36,6 +36,22 @@ public class Stack {
         return (++j);
     }
 
+    public int pullInfinite() {
+        if (this.cardsInStack != 4 * 13 * this.decks){
+            System.out.println("something wrong");
+        }
+
+        int nextCardIndex = random.nextInt(cardsInStack);
+        int i = stack[0];
+        int j = 0; //index of card in stack to be determined
+        while (i <= nextCardIndex) {
+            j++;
+            i+=stack[j];
+        }
+
+        return (++j);
+    }
+
     public void test() {
         int pulled = pull();
         while (pulled != -1) {
