@@ -18,16 +18,6 @@ public class StrategyGenerator {
 
     }
 
-    public void test() {
-        getValueProbabilityDealer();
-        printArray(valueProbability);
-        APHD node = new APHD();
-        node.value = 21;
-        node.depth = 2;
-        //System.out.println(expectedOutcomeNoTake(node));
-        //printArray(valueProbability);
-    }
-
     public void runFirstCardDependent() {
         //of course the dealer has one card open. Say we want to generate a strategy based on that too..
         //10 width,  10 height
@@ -43,8 +33,6 @@ public class StrategyGenerator {
             }
             traverse(root, dealerUpperLimit);
             valueProbability = getValueProbability(root, true);
-            //System.out.println(". The probability table of dealer: ");
-            //printArray(valueProbability);
             run();
         }
         System.out.println("S  2  3  4  5  6  7  8  9  10 A");
@@ -93,9 +81,6 @@ public class StrategyGenerator {
                 for (boolean b : takeListSoft.get(i)) {
                     if (bPrev != b) {
                         System.out.println("PROBLEM SOFT");
-                        //for (boolean b2 : takeListSoft.get(i)) {
-                        //    System.out.print(b2?"1":"0");
-                        //}
                         return;
                     }
                 }
@@ -105,9 +90,6 @@ public class StrategyGenerator {
                 for (boolean b : takeListHard.get(i)) {
                     if (bPrev != b) {
                         System.out.println("PROBLEM HARD");
-                        //for (boolean b2 : takeListHard.get(i)) {
-                        //    System.out.print(b2?"1":"0");
-                        //}
                         return;
                     }
                 }
@@ -121,13 +103,11 @@ public class StrategyGenerator {
                 takeHard[(i-11)*10+(dealerFirstCard-2)] = takeListHard.get(i).get(0)?1:0;
             }
         }
-        //System.out.println(root.expOutcomeBestMethod);
     }
 
     private void traverseTake(APHD root) {
         if (root.value < 21) {
             if (root.value > 1) {
-                //System.out.println(Integer.toString(root.value) + " " + Integer.toString(root.aces) + " " + (root.bestOptionIsTake ? "take":"dont"));
                 if (root.aces == 0) {
                     takeListHard.get(root.value).add(root.bestOptionIsTake);
                 } else {
@@ -140,29 +120,6 @@ public class StrategyGenerator {
         }
     }
 
-
-    private void printArray(double[] arr) {
-        for ( int i = 0; i < arr.length; i++ ) {
-            System.out.println(/*i + ":\t" + */arr[i]);
-        }
-    }
-
-    private double probabilityDeathGivenPathTakeOne(APHD obj) {
-        double prob = obj.deathProbability;
-        for (APHD child : obj.options) {
-            prob -= child.deathProbability;
-        }
-        return prob/obj.probability;
-    }
-
-    private double sum(double[] arr) {
-        double result = 0;
-        for (double val : arr) {
-            result += val;
-        }
-        return result;
-    }
-
     private void bestMethodTraversal(APHD node) {
         double expOutcomeNoTake = expectedOutcomeNoTake(node);
         if (node.options != null && !node.options.isEmpty()) {
@@ -172,7 +129,7 @@ public class StrategyGenerator {
                 bestMethodTraversal(child);
                 expOutcomeTake += child.expOutcomeBestMethod * (child.value == 10 ? 4.0 : 1.0) / 13.0;
             }
-            expOutcomeTake -= probabilityDeathGivenPathTakeOne(node);
+            expOutcomeTake -= node.deathProbabilityOneHit;
             if(expOutcomeNoTake >= expOutcomeTake) {
                 node.expOutcomeBestMethod = expOutcomeNoTake;
                 node.bestOptionIsTake = false;
@@ -298,8 +255,9 @@ public class StrategyGenerator {
             }
             //aka: go over && hard hand && i != 11. No more children
             else {
-                par.deathProbability += par.probability * (i==10?4.0:1.0) / 13.0;
+                par.deathProbabilityOneHit += (i==10?4.0:1.0) / 13.0;
             }
         }
+        par.deathProbability += par.deathProbabilityOneHit * par.probability;
     }
 }

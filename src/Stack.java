@@ -18,6 +18,34 @@ public class Stack {
         this.random = new Random();
     }
 
+    public void setStack(int[] newStack) {
+        this.stack = newStack;
+        this.cardsInStack = 0;
+        for (int card : newStack) {
+            this.cardsInStack += card;
+        }
+    }
+
+    public boolean pulled(int card) {
+        if (stack[card-1] > 0) {
+            stack[card-1]--; 
+            cardsInStack--;
+            return true;           
+        } else {
+            return false;
+        }
+    }
+
+    public Stack copy() {
+        Stack newStack = new Stack(decks);
+        newStack.setStack(this.stack.clone());
+        return newStack;
+    }
+
+    public double probability(int card) {
+        return (double) 0.0 + ((double) stack[card-1]) / cardsInStack;
+    }
+
     public int pull() {
         if (cardsInStack == 0) {
             return -1; //need something better for this
@@ -65,5 +93,13 @@ public class Stack {
 
     public int getCards(){
         return cardsInStack;
+    }
+
+    public String toString() {
+        String res = Integer.toString(stack[0]);
+        for (int i = 1; i < 10; i++) {
+            res += "-" + Integer.toString(stack[i]);
+        }
+        return res;
     }
 }
