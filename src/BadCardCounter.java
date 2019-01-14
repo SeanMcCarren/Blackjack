@@ -78,7 +78,7 @@ class BadCardCounter extends Player{
             betSize = 100;
         }*/
 
-        this.betSize = 100;
+        this.betSize = 1;
     }
 
     public void notice(int value){

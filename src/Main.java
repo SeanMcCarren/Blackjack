@@ -1,8 +1,8 @@
 public class Main {
     public static void main(String[] args) {
-        
-        playFullGames();
-        
+        for(int i = 0; i < 10; i++){
+            playFullGames();
+        }
     }
 
     public static void playFullGames() {
@@ -28,12 +28,12 @@ public class Main {
             }
         }
 
-        double result1 = player.getWinnings()/(100.0 * amountOfGames);
+        double result1 = player.getWinnings()/(100.0  * amountOfGames);
         double result2 = player.getWinnings()/(100.0 * rounds);
         //double result2 = player.getAmountOfWins()/ (double) amountOfGames; 
         System.out.println("Money won, in earnings / total games played: " + result1 + ".");
         System.out.println("Money won, in earnings / total rounds played: " + result2 + ".");
-        //System.out.println("Win percentage, i.e. games won/ total games played: " + result2 + ".");
+        System.out.println("Amount of rounds played: " + rounds + ".");
         System.out.println("Amount of games played: " + amountOfGames + ".");
 
     }
