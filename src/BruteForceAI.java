@@ -125,6 +125,9 @@ public class BruteForceAI extends CardCounter {
 
     @Override
     public boolean wantsNext(int card) {
+        if (getScore() <= 11) {
+            return true; //imperative, worst option is standing
+        }
         if (this.dealerFirstCard != card) {
             this.dealerFirstCard = card;
             valueProbDealer = storageValueProbs.get(card==11?0:card-1);
